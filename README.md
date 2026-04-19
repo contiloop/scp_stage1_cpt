@@ -55,7 +55,7 @@ make set VERIFY_CUDA_KERNELS=0
 - `make set`: installs dependencies and ensures `causal_conv1d` is installed (install-only when missing)
   - skip `causal_conv1d` setup/verification via `make set SKIP_CAUSAL_CONV1D=1`
   - skip post-setup CUDA kernel verification via `make set VERIFY_CUDA_KERNELS=0`
-  - installs `transformers>=5.4.0` (required for `unsloth/gemma-4-E2B`)
+  - installs `transformers==5.5.4` by default (override via `make set TRANSFORMERS_VERSION=...`)
 - `make train`: runs CPT training from config (`config=...` selects config file)
 - `make train-resume`: resumes from latest checkpoint (`training.resume_from_checkpoint=auto`)
 - `make eval`: runs validation PPL for base + CPT model, then lm-eval on CPT model
@@ -85,6 +85,7 @@ Train-time eval batch still uses `training.per_device_eval_batch_size`.
 
 - Dataset source: `alwaysgood/korean-financial-cpt` + `alwaysgood/korean_rlhf_content_filtered`
 - Backend: Unsloth (`FastLanguageModel` / `FastVisionModel`)
+- Model backend preference: `model.backend_preference=auto` (default `language -> vision` fallback)
 - Logging: W&B
 - Input embeddings are frozen by default (`training.freeze_embeddings=true`)
 - Runtime packing (train-time): `training.runtime_packing.enabled=true` (`bfd_split`, `padding_free=true`)

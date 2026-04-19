@@ -282,11 +282,31 @@ def main(cfg: DictConfig) -> None:
     model = None
     tokenizer = None
     backend = None
+    backend_preference = str(cfg.model.get("backend_preference", "auto")).strip().lower()
+    if backend_preference not in {"auto", "language", "vision"}:
+        raise ValueError(
+            "cfg.model.backend_preference must be one of: auto, language, vision"
+        )
+
+    if backend_preference == "language":
+        backend_candidates = (
+            ("language", FastLanguageModel),
+            ("vision", FastVisionModel),
+        )
+    elif backend_preference == "vision":
+        backend_candidates = (
+            ("vision", FastVisionModel),
+            ("language", FastLanguageModel),
+        )
+    else:
+        # Auto mode defaults to language-first because text-only CPT benefits from runtime packing.
+        backend_candidates = (
+            ("language", FastLanguageModel),
+            ("vision", FastVisionModel),
+        )
+
     backend_errors: list[str] = []
-    for candidate_backend, candidate_class in (
-        ("vision", FastVisionModel),
-        ("language", FastLanguageModel),
-    ):
+    for candidate_backend, candidate_class in backend_candidates:
         kwargs = dict(from_pretrained_kwargs)
         # Unsloth needs full_finetuning=True to avoid silently routing to LoRA mode.
         if "full_finetuning" in inspect.signature(candidate_class.from_pretrained).parameters:

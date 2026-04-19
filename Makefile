@@ -10,6 +10,7 @@ CKPT ?= final
 HF_PRIVATE ?= false
 SKIP_CAUSAL_CONV1D ?= 0
 VERIFY_CUDA_KERNELS ?= 1
+TRANSFORMERS_VERSION ?= 5.5.4
 
 define WITH_TORCH_LIB
 TORCH_LIB_DIR="$$( $(PYTHON) -c 'import os, torch; print(os.path.join(os.path.dirname(torch.__file__), "lib"))' )"; \
@@ -20,7 +21,7 @@ endef
 setup:
 	$(PYTHON) -m pip install -e . --no-deps -q
 	$(PYTHON) -m pip install -U huggingface_hub -q
-	$(PYTHON) -m pip install "transformers>=5.4.0" "trl>=0.15.0" --no-deps -q
+	$(PYTHON) -m pip install "transformers==$(TRANSFORMERS_VERSION)" "trl>=0.15.0" --no-deps -q
 	$(PYTHON) -m pip install "hydra-core>=1.3.2" "omegaconf>=2.3.0" -q
 	$(PYTHON) -m pip install --upgrade unsloth unsloth-zoo --no-deps -q
 	@if [ "$(SKIP_CAUSAL_CONV1D)" = "1" ]; then \

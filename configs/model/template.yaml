@@ -2,6 +2,7 @@
 pretrained_model_name_or_path: "replace-with-hf-model-id"
 tokenizer_name_or_path: null
 trust_remote_code: true
+backend_preference: "auto"  # auto|language|vision
 
 max_seq_length: 4096
 torch_dtype: "bfloat16"
@@ -14,4 +15,3 @@ quantization:
   bnb_4bit_compute_dtype: "bfloat16"
   bnb_4bit_quant_type: "nf4"
   bnb_4bit_use_double_quant: true
-
