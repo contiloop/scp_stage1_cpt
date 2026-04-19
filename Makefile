@@ -9,6 +9,7 @@ HF_REPO ?=
 CKPT ?= final
 HF_PRIVATE ?= false
 SKIP_CAUSAL_CONV1D ?= 0
+VERIFY_CUDA_KERNELS ?= 1
 
 define WITH_TORCH_LIB
 TORCH_LIB_DIR="$$( $(PYTHON) -c 'import os, torch; print(os.path.join(os.path.dirname(torch.__file__), "lib"))' )"; \
@@ -27,11 +28,16 @@ setup:
 	else \
 		PYTHON=$(PYTHON) bash scripts/ensure_causal_conv1d.sh; \
 	fi
-	$(PYTHON) -c "from fla.ops.gated_delta_rule import chunk_gated_delta_rule" 2>/dev/null || $(PYTHON) -m pip install flash-linear-attention -q
+	$(PYTHON) -c "from fla.ops.gated_delta_rule import chunk_gated_delta_rule" 2>/dev/null || $(PYTHON) -m pip install flash-linear-attention --no-deps -q
 	@$(PYTHON) -c "import torch; print('  flash_sdp:', torch.backends.cuda.flash_sdp_enabled())"
 	$(PYTHON) -m pip install lm-eval -q 2>/dev/null || true
 
-set: setup verify-cuda-kernels
+set: setup
+	@if [ "$(VERIFY_CUDA_KERNELS)" = "1" ]; then \
+		$(MAKE) verify-cuda-kernels PYTHON=$(PYTHON) SKIP_CAUSAL_CONV1D=$(SKIP_CAUSAL_CONV1D); \
+	else \
+		echo "  skip CUDA kernel verification (VERIFY_CUDA_KERNELS=0)"; \
+	fi
 
 verify-cuda-kernels:
 	@if [ "$(SKIP_CAUSAL_CONV1D)" = "1" ]; then \

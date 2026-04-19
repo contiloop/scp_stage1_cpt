@@ -43,11 +43,18 @@ For Gemma-only workflows (no `causal_conv1d` dependency), you can skip that setu
 make set SKIP_CAUSAL_CONV1D=1
 ```
 
+To skip CUDA kernel verification (setup only), use:
+
+```bash
+make set VERIFY_CUDA_KERNELS=0
+```
+
 ## What Each Make Target Does
 
 - `make preprocess`: downloads/loads raw dataset and writes processed train/val dataset
 - `make set`: installs dependencies and ensures `causal_conv1d` is installed (install-only when missing)
   - skip `causal_conv1d` setup/verification via `make set SKIP_CAUSAL_CONV1D=1`
+  - skip post-setup CUDA kernel verification via `make set VERIFY_CUDA_KERNELS=0`
   - installs `transformers>=5.4.0` (required for `unsloth/gemma-4-E2B`)
 - `make train`: runs CPT training from config (`config=...` selects config file)
 - `make train-resume`: resumes from latest checkpoint (`training.resume_from_checkpoint=auto`)
