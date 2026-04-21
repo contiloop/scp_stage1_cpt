@@ -437,7 +437,7 @@ def main(cfg: DictConfig) -> None:
             sft_kwargs,
             sft_fields,
             "packing_strategy",
-            str(runtime_packing_cfg.get("strategy", "bfd_split")),
+            str(runtime_packing_cfg.get("strategy", "bfd")),
         )
         _set_if_supported(
             sft_kwargs,

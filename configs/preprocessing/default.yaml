@@ -9,7 +9,7 @@ chunking:
 
 packing:
   enabled: false
-  strategy: "bfd_split"
+  strategy: "bfd"
   max_length: ${model.max_seq_length}
 
 split:

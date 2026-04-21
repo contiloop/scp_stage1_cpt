@@ -17,7 +17,7 @@ Independent CPT pipeline using Hydra + Unsloth + W&B.
 
 git clone https://github.com/contiloop/scp_stage1_cpt.git
 cd scp_stage1_cpt
-make set                   # ensures causal_conv1d is installed (installs only if missing)
+make set                   # includes causal_conv1d kernel check (rebuilds only if needed)
 python -c "from huggingface_hub import login; login(token='hf_xxxxxxx')"
 wandb login                # optional
 make preprocess
@@ -52,7 +52,7 @@ make set VERIFY_CUDA_KERNELS=0
 ## What Each Make Target Does
 
 - `make preprocess`: downloads/loads raw dataset and writes processed train/val dataset
-- `make set`: installs dependencies and ensures `causal_conv1d` is installed (install-only when missing)
+- `make set`: installs dependencies, checks `causal_conv1d` CUDA kernel runtime, and rebuilds only when needed (Blackwell uses source build fallback)
   - skip `causal_conv1d` setup/verification via `make set SKIP_CAUSAL_CONV1D=1`
   - skip post-setup CUDA kernel verification via `make set VERIFY_CUDA_KERNELS=0`
   - installs `transformers==5.5.4` by default (override via `make set TRANSFORMERS_VERSION=...`)
@@ -88,7 +88,7 @@ Train-time eval batch still uses `training.per_device_eval_batch_size`.
 - Model backend preference: `model.backend_preference=auto` (default `language -> vision` fallback)
 - Logging: W&B
 - Input embeddings are frozen by default (`training.freeze_embeddings=true`)
-- Runtime packing (train-time): `training.runtime_packing.enabled=true` (`bfd_split`, `padding_free=true`)
+- Runtime packing (train-time): `training.runtime_packing.enabled=true` (`bfd`, `padding_free=true`)
 - Preprocessing packing: `preprocessing.packing.enabled=false` (store unpacked records)
 - Checkpoint policy: `save_strategy=steps`, `save_steps=200`, `save_total_limit=1`
 

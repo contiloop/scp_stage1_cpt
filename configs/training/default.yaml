@@ -34,7 +34,7 @@ grad_norm_logging:
 
 runtime_packing:
   enabled: true
-  strategy: "bfd_split"
+  strategy: "bfd"
   padding_free: true
   max_length: ${model.max_seq_length}
 
